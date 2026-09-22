@@ -156,20 +156,5 @@ Right-click on `app/src/test/java/com/example/loadsheddingapp` and select "Run T
 - Local Authentication: User credentials are managed locally in Room for Part 2 prototype purposes. Cloud session sync will be added with Firebase Auth in Part 3.
 - Language Localization: Language options are selectable in Settings and stored in DataStore; string resource files for full isiZulu and Afrikaans translations will be expanded in future PoE stages.
 
-## Recommended Git Commit Structure
-```
-Initial Android project setup
-Added Room database entities and DAOs
-Added Retrofit API integration
-Added authentication screens
-Added dashboard screen
-Added suburb search functionality
-Added schedule screen
-Added settings screen
-Added unit tests
-Updated README
-Added GitHub Actions workflow
-```
-
 ## GitHub Actions Workflow
 The project includes a GitHub Actions workflow defined in `.github/workflows/android.yml`. It runs automated unit tests and debug builds on every push or pull request to the `main` or `master` branch.
