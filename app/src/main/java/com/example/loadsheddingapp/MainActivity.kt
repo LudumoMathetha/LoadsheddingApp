@@ -1,11 +1,16 @@
 package com.example.loadsheddingapp
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import com.example.loadsheddingapp.data.local.AppDatabase
 import com.example.loadsheddingapp.data.preferences.UserPreferencesManager
@@ -20,10 +25,11 @@ import com.example.loadsheddingapp.ui.viewmodel.ScheduleViewModel
 import com.example.loadsheddingapp.ui.viewmodel.SettingsViewModel
 import com.example.loadsheddingapp.ui.viewmodel.SuburbViewModel
 import com.example.loadsheddingapp.ui.viewmodel.ViewModelFactory
+import java.util.Locale
 
 // MainActivity serves as the single Activity entry point for Jetpack Compose.
 // It initializes core data dependencies (Room, DataStore, Repositories) and ViewModels,
-// then observes user theme preferences to display the main navigation graph.
+// then observes user theme and language preferences to display the localized navigation graph.
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,18 +61,43 @@ class MainActivity : ComponentActivity() {
         val settingsViewModel = ViewModelProvider(this, factory)[SettingsViewModel::class.java]
 
         setContent {
-            // Collect dark mode preference state from DataStore to apply light or dark theme dynamically.
+            // Collect dark mode and language preferences from DataStore.
             val userPreferences by settingsViewModel.userPreferences.collectAsState()
 
-            LoadsheddingAppTheme(darkTheme = userPreferences.darkMode) {
-                AppNavigation(
-                    authViewModel = authViewModel,
-                    dashboardViewModel = dashboardViewModel,
-                    suburbViewModel = suburbViewModel,
-                    scheduleViewModel = scheduleViewModel,
-                    settingsViewModel = settingsViewModel
-                )
+            LocalizedApp(languageCode = userPreferences.selectedLanguage) {
+                LoadsheddingAppTheme(darkTheme = userPreferences.darkMode) {
+                    AppNavigation(
+                        authViewModel = authViewModel,
+                        dashboardViewModel = dashboardViewModel,
+                        suburbViewModel = suburbViewModel,
+                        scheduleViewModel = scheduleViewModel,
+                        settingsViewModel = settingsViewModel
+                    )
+                }
             }
         }
+    }
+}
+
+// LocalizedApp dynamically updates the Composition Context with the selected language locale (English, Afrikaans, isiXhosa).
+@Composable
+fun LocalizedApp(
+    languageCode: String,
+    content: @Composable () -> Unit
+) {
+    val context = LocalContext.current
+    val currentConfig = LocalConfiguration.current
+    val locale = Locale(languageCode)
+    Locale.setDefault(locale)
+
+    val config = Configuration(currentConfig)
+    config.setLocale(locale)
+
+    val localizedContext = context.createConfigurationContext(config)
+
+    CompositionLocalProvider(
+        LocalContext provides localizedContext
+    ) {
+        content()
     }
 }

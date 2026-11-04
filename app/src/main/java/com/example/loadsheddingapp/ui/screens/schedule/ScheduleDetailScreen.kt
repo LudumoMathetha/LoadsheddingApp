@@ -34,9 +34,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.loadsheddingapp.R
 import com.example.loadsheddingapp.ui.components.ErrorMessage
 import com.example.loadsheddingapp.ui.components.LoadingIndicator
 import com.example.loadsheddingapp.ui.components.ScheduleCard
@@ -60,7 +62,7 @@ fun ScheduleDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(scheduleUiState.suburb?.name ?: "Schedule Details", fontWeight = FontWeight.Bold) },
+                title = { Text(scheduleUiState.suburb?.name ?: stringResource(R.string.schedule_details_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -120,7 +122,7 @@ fun ScheduleDetailScreen(
                                 .padding(horizontal = 12.dp, vertical = 6.dp)
                         ) {
                             Text(
-                                text = if (suburb.currentStage == 0) "No Shedding" else "Stage ${suburb.currentStage}",
+                                text = if (suburb.currentStage == 0) stringResource(R.string.no_loadshedding) else stringResource(R.string.stage_active, suburb.currentStage),
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
@@ -161,10 +163,10 @@ fun ScheduleDetailScreen(
 
             // Loading Indicator
             if (scheduleUiState.isLoading) {
-                LoadingIndicator(message = "Loading schedule...")
+                LoadingIndicator(message = stringResource(R.string.loading))
             } else {
                 Text(
-                    text = "Upcoming Load-Shedding Slots",
+                    text = stringResource(R.string.upcoming_slots),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -172,7 +174,7 @@ fun ScheduleDetailScreen(
 
                 if (scheduleUiState.schedules.isEmpty()) {
                     Text(
-                        text = "No upcoming load-shedding slots scheduled.",
+                        text = stringResource(R.string.no_upcoming_slots),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                         modifier = Modifier.padding(top = 16.dp)

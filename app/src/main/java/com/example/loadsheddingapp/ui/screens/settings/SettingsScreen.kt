@@ -36,13 +36,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.loadsheddingapp.R
 import com.example.loadsheddingapp.ui.viewmodel.AuthViewModel
 import com.example.loadsheddingapp.ui.viewmodel.SettingsViewModel
 
-// SettingsScreen providing Dark Mode toggle, language selection, notification options, and student prototype information.
+// SettingsScreen providing Dark Mode toggle, language selection (English, Afrikaans, isiXhosa), notification options, and student prototype information.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -56,7 +58,7 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.settings_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -85,8 +87,8 @@ fun SettingsScreen(
             ) {
                 Icon(Icons.Default.Palette, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 Column(modifier = Modifier.padding(start = 12.dp).weight(1f)) {
-                    Text("Dark Mode", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                    Text("Enable dark color scheme across screens", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.dark_mode), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.dark_mode_desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Switch(
                     checked = userPreferences.darkMode,
@@ -96,12 +98,12 @@ fun SettingsScreen(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = DividerDefaults.color)
 
-            // Language Selection Section
+            // Language Selection Section (English, Afrikaans, isiXhosa)
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Language, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     Text(
-                        text = "Preferred Language",
+                        text = stringResource(R.string.preferred_language),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(start = 12.dp)
@@ -111,9 +113,9 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 val languages = listOf(
-                    "en" to "English",
-                    "zu" to "isiZulu (Structure prepared)",
-                    "af" to "Afrikaans (Structure prepared)"
+                    "en" to stringResource(R.string.language_english),
+                    "af" to stringResource(R.string.language_afrikaans),
+                    "xh" to stringResource(R.string.language_isixhosa)
                 )
 
                 languages.forEach { (code, name) ->
@@ -142,8 +144,8 @@ fun SettingsScreen(
                 ) {
                     Icon(Icons.Default.Notifications, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     Column(modifier = Modifier.padding(start = 12.dp).weight(1f)) {
-                        Text("Notification Alerts", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                        Text("Receive lead-time reminders before scheduled slots", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.notification_alerts), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.notification_desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Switch(
                         checked = userPreferences.notificationsEnabled,
@@ -153,9 +155,13 @@ fun SettingsScreen(
 
                 if (userPreferences.notificationsEnabled) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Lead-time notification notice:", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.lead_time_notice), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
 
-                    val leadTimes = listOf(15 to "15 minutes before", 30 to "30 minutes before", 60 to "60 minutes before")
+                    val leadTimes = listOf(
+                        15 to stringResource(R.string.min_before, 15),
+                        30 to stringResource(R.string.min_before, 30),
+                        60 to stringResource(R.string.min_before, 60)
+                    )
                     leadTimes.forEach { (minutes, label) ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(
@@ -181,17 +187,17 @@ fun SettingsScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                         Text(
-                            text = "Prototype Information",
+                            text = stringResource(R.string.prototype_info),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Application: Load-Shedding Tracker", style = MaterialTheme.typography.bodySmall)
+                    Text("Application: ${stringResource(R.string.app_name)}", style = MaterialTheme.typography.bodySmall)
                     Text("Student: Ludumo Mathetha (ST10449894)", style = MaterialTheme.typography.bodySmall)
                     Text("Module: OPSC6312 Part 2 Prototype", style = MaterialTheme.typography.bodySmall)
-                    Text("Version: 1.0.0 (Local Room & Retrofit)", style = MaterialTheme.typography.bodySmall)
+                    Text("Languages: English, Afrikaans, isiXhosa", style = MaterialTheme.typography.bodySmall)
                 }
             }
 
@@ -207,7 +213,7 @@ fun SettingsScreen(
             ) {
                 Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Sign Out", fontSize = 16.sp)
+                Text(stringResource(R.string.sign_out), fontSize = 16.sp)
             }
         }
     }

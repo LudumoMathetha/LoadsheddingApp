@@ -39,9 +39,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.loadsheddingapp.R
 import com.example.loadsheddingapp.ui.components.SuburbCard
 import com.example.loadsheddingapp.ui.components.getStageColor
 import com.example.loadsheddingapp.ui.viewmodel.AuthViewModel
@@ -69,13 +71,13 @@ fun DashboardScreen(
                 title = {
                     Column {
                         Text(
-                            text = "Load-Shedding Tracker",
+                            text = stringResource(R.string.app_name),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
                         if (currentUser != null) {
                             Text(
-                                text = "Welcome, ${currentUser?.fullName}",
+                                text = stringResource(R.string.welcome_user, currentUser!!.fullName),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                             )
@@ -128,14 +130,14 @@ fun DashboardScreen(
                 ) {
                     Column {
                         Text(
-                            text = "NATIONAL STATUS",
+                            text = stringResource(R.string.national_status),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color.Black.copy(alpha = 0.7f)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = if (nationalStage == 0) "No Load-Shedding" else "Stage $nationalStage Active",
+                            text = if (nationalStage == 0) stringResource(R.string.no_loadshedding) else stringResource(R.string.stage_active, nationalStage),
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             color = Color.Black
@@ -169,7 +171,7 @@ fun DashboardScreen(
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(Icons.Default.Search, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
-                    Text("Search")
+                    Text(stringResource(R.string.search_button))
                 }
 
                 OutlinedButton(
@@ -177,7 +179,7 @@ fun DashboardScreen(
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(Icons.Default.List, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
-                    Text("My Suburbs")
+                    Text(stringResource(R.string.my_suburbs_button))
                 }
             }
 
@@ -190,14 +192,14 @@ fun DashboardScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Saved Locations (${savedSuburbs.size})",
+                    text = stringResource(R.string.saved_locations, savedSuburbs.size),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
 
                 if (savedSuburbs.isNotEmpty()) {
                     OutlinedButton(onClick = onNavigateToSavedSuburbs) {
-                        Text("Manage", fontSize = 12.sp)
+                        Text(stringResource(R.string.manage_button), fontSize = 12.sp)
                     }
                 }
             }
@@ -221,13 +223,13 @@ fun DashboardScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "No saved suburbs yet",
+                            text = stringResource(R.string.no_saved_suburbs),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Search and save your suburb to view local schedules quickly.",
+                            text = stringResource(R.string.search_and_save_prompt),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -235,7 +237,7 @@ fun DashboardScreen(
                         Button(onClick = onNavigateToSearch) {
                             Icon(Icons.Default.Add, contentDescription = null)
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Add Suburb")
+                            Text(stringResource(R.string.add_suburb))
                         }
                     }
                 }

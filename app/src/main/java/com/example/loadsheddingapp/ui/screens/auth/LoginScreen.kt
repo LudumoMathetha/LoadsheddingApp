@@ -32,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.loadsheddingapp.R
 import com.example.loadsheddingapp.ui.viewmodel.AuthViewModel
 
 // LoginScreen component providing form inputs, validation error banners, and authentication triggers.
@@ -78,7 +80,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Load-Shedding Tracker",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp
@@ -87,7 +89,7 @@ fun LoginScreen(
             )
 
             Text(
-                text = "Sign in to track schedules in your area",
+                text = stringResource(R.string.login_title),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
@@ -110,7 +112,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = loginState.emailInput,
                 onValueChange = { authViewModel.onLoginEmailChanged(it) },
-                label = { Text("Email Address") },
+                label = { Text(stringResource(R.string.email_label)) },
                 leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email Icon") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
@@ -126,7 +128,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = loginState.passwordInput,
                 onValueChange = { authViewModel.onLoginPasswordChanged(it) },
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.password_label)) },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Lock Icon") },
                 trailingIcon = {
                     IconButton(onClick = { authViewModel.toggleLoginPasswordVisibility() }) {
@@ -161,7 +163,7 @@ fun LoginScreen(
                         modifier = Modifier.size(24.dp)
                     )
                 } else {
-                    Text(text = "Sign In", fontSize = 16.sp)
+                    Text(text = stringResource(R.string.sign_in_button), fontSize = 16.sp)
                 }
             }
 
@@ -169,7 +171,7 @@ fun LoginScreen(
 
             // Navigation to Register Screen
             TextButton(onClick = onNavigateToRegister) {
-                Text(text = "Don't have an account? Register")
+                Text(text = stringResource(R.string.no_account_register))
             }
         }
     }

@@ -33,10 +33,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.loadsheddingapp.R
 import com.example.loadsheddingapp.ui.components.ErrorMessage
 import com.example.loadsheddingapp.ui.components.LoadingIndicator
 import com.example.loadsheddingapp.ui.components.SuburbCard
@@ -55,7 +57,7 @@ fun SearchSuburbScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Search Suburbs", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.search_suburbs_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -82,8 +84,8 @@ fun SearchSuburbScreen(
                 OutlinedTextField(
                     value = searchUiState.searchQuery,
                     onValueChange = { suburbViewModel.onSearchQueryChanged(it) },
-                    label = { Text("Search Suburb or Municipality") },
-                    placeholder = { Text("e.g. Sandton, Randburg, Sea Point") },
+                    label = { Text(stringResource(R.string.search_suburbs_title)) },
+                    placeholder = { Text(stringResource(R.string.search_placeholder)) },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
                     trailingIcon = {
                         if (searchUiState.searchQuery.isNotEmpty()) {
@@ -151,7 +153,7 @@ fun SearchSuburbScreen(
 
             // Loading Indicator
             if (searchUiState.isLoading) {
-                LoadingIndicator(message = "Searching suburbs...")
+                LoadingIndicator(message = stringResource(R.string.loading))
             } else {
                 // Results List
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -180,7 +182,7 @@ fun SearchSuburbScreen(
                                 ) {
                                     Icon(Icons.Default.Add, contentDescription = null)
                                     Spacer(modifier = Modifier.height(4.dp))
-                                    Text("Add", fontSize = 12.sp)
+                                    Text(stringResource(R.string.add_button), fontSize = 12.sp)
                                 }
                             }
                         }

@@ -33,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.loadsheddingapp.R
 import com.example.loadsheddingapp.ui.viewmodel.AuthViewModel
 
 // RegisterScreen component for local user registration with input validation and error feedback.
@@ -79,7 +81,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Create Account",
+                text = stringResource(R.string.create_account_title),
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp
@@ -88,7 +90,7 @@ fun RegisterScreen(
             )
 
             Text(
-                text = "Register to save suburbs and view schedules",
+                text = stringResource(R.string.register_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
@@ -111,7 +113,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = registerState.fullNameInput,
                 onValueChange = { authViewModel.onRegisterFullNameChanged(it) },
-                label = { Text("Full Name") },
+                label = { Text(stringResource(R.string.full_name_label)) },
                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = "User Icon") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
@@ -127,7 +129,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = registerState.emailInput,
                 onValueChange = { authViewModel.onRegisterEmailChanged(it) },
-                label = { Text("Email Address") },
+                label = { Text(stringResource(R.string.email_label)) },
                 leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email Icon") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
@@ -143,7 +145,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = registerState.passwordInput,
                 onValueChange = { authViewModel.onRegisterPasswordChanged(it) },
-                label = { Text("Password (min. 6 characters)") },
+                label = { Text(stringResource(R.string.password_label)) },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Lock Icon") },
                 trailingIcon = {
                     IconButton(onClick = { authViewModel.toggleRegisterPasswordVisibility() }) {
@@ -168,7 +170,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = registerState.confirmPasswordInput,
                 onValueChange = { authViewModel.onRegisterConfirmPasswordChanged(it) },
-                label = { Text("Confirm Password") },
+                label = { Text(stringResource(R.string.confirm_password_label)) },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Lock Icon") },
                 trailingIcon = {
                     IconButton(onClick = { authViewModel.toggleRegisterConfirmPasswordVisibility() }) {
@@ -203,7 +205,7 @@ fun RegisterScreen(
                         modifier = Modifier.size(24.dp)
                     )
                 } else {
-                    Text(text = "Register", fontSize = 16.sp)
+                    Text(text = stringResource(R.string.register_button), fontSize = 16.sp)
                 }
             }
 
@@ -211,7 +213,7 @@ fun RegisterScreen(
 
             // Navigation back to Login
             TextButton(onClick = onNavigateToLogin) {
-                Text(text = "Already have an account? Sign In")
+                Text(text = stringResource(R.string.already_have_account))
             }
         }
     }

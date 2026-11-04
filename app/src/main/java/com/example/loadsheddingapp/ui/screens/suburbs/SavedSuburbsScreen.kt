@@ -28,8 +28,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.loadsheddingapp.R
 import com.example.loadsheddingapp.ui.components.SuburbCard
 import com.example.loadsheddingapp.ui.viewmodel.SuburbViewModel
 
@@ -47,7 +49,7 @@ fun SavedSuburbsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Saved Suburbs", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.saved_suburbs_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -87,19 +89,19 @@ fun SavedSuburbsScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "No saved locations found",
+                            text = stringResource(R.string.no_saved_locations),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Search for suburbs and click Add to track load-shedding schedules.",
+                            text = stringResource(R.string.search_and_save_prompt),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = onNavigateToSearch) {
-                            Text("Find Suburb")
+                            Text(stringResource(R.string.search_button))
                         }
                     }
                 }
