@@ -3,6 +3,7 @@ package com.example.loadsheddingapp.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loadsheddingapp.data.repository.SuburbRepository
+import com.example.loadsheddingapp.data.repository.SyncRepository
 import com.example.loadsheddingapp.domain.model.Suburb
 import com.example.loadsheddingapp.utils.NetworkResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,13 +21,21 @@ data class SuburbSearchUiState(
     val successNotification: String? = null
 )
 
-// ViewModel managing suburb search and saved suburb management.
+// ViewModel managing suburb search and saved suburb management with offline queueing support.
 class SuburbViewModel(
-    private val suburbRepository: SuburbRepository
+    private val suburbRepository: SuburbRepository,
+    private val syncRepository: SyncRepository? = null
 ) : ViewModel() {
 
     private val _searchUiState = MutableStateFlow(SuburbSearchUiState())
     val searchUiState: StateFlow<SuburbSearchUiState> = _searchUiState.asStateFlow()
+
+    val pendingSyncCount: StateFlow<Int> = (syncRepository?.pendingSyncCount ?: MutableStateFlow(0))
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = 0
+        )
 
     val savedSuburbs: StateFlow<List<Suburb>> = suburbRepository.savedSuburbs
         .stateIn(
@@ -88,6 +97,8 @@ class SuburbViewModel(
             }
 
             suburbRepository.saveSuburb(suburb)
+            syncRepository?.queueOfflineAction("ADD_SUBURB", suburb.suburbId, suburb.name)
+
             _searchUiState.value = _searchUiState.value.copy(
                 successNotification = "${suburb.name} was successfully added to your saved suburbs."
             )
@@ -97,12 +108,14 @@ class SuburbViewModel(
     fun deleteSuburb(suburb: Suburb) {
         viewModelScope.launch {
             suburbRepository.deleteSuburb(suburb)
+            syncRepository?.queueOfflineAction("DELETE_SUBURB", suburb.suburbId)
         }
     }
 
     fun toggleFavorite(suburbId: String, isFavorite: Boolean) {
         viewModelScope.launch {
             suburbRepository.toggleFavorite(suburbId, isFavorite)
+            syncRepository?.queueOfflineAction("TOGGLE_FAVORITE", suburbId, isFavorite.toString())
         }
     }
 

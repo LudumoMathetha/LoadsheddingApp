@@ -17,7 +17,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -49,7 +51,7 @@ import com.example.loadsheddingapp.ui.components.getStageColor
 import com.example.loadsheddingapp.ui.viewmodel.AuthViewModel
 import com.example.loadsheddingapp.ui.viewmodel.DashboardViewModel
 
-// DashboardScreen displaying current national stage banner, saved suburbs list, and quick actions.
+// DashboardScreen displaying current national stage banner, offline sync status, and saved suburbs.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
@@ -64,6 +66,8 @@ fun DashboardScreen(
     val nationalStage by dashboardViewModel.nationalStage.collectAsState()
     val savedSuburbs by dashboardViewModel.savedSuburbs.collectAsState()
     val currentUser by authViewModel.currentUser.collectAsState()
+    val isOnline by dashboardViewModel.isOnline.collectAsState()
+    val pendingSyncCount by dashboardViewModel.pendingSyncCount.collectAsState()
 
     Scaffold(
         topBar = {
@@ -113,6 +117,51 @@ fun DashboardScreen(
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
+            // Offline Status & Pending Sync Banner
+            if (!isOnline || pendingSyncCount > 0) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (!isOnline) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.tertiaryContainer
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.CloudOff,
+                                contentDescription = "Offline Icon",
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Column {
+                                Text(
+                                    text = if (!isOnline) "Offline Mode Active" else "Pending Sync Actions ($pendingSyncCount)",
+                                    fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = if (!isOnline) "Changes will sync automatically when online." else "Syncing local Room actions to server...",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+
+                        if (isOnline && pendingSyncCount > 0) {
+                            IconButton(onClick = { dashboardViewModel.triggerManualSync() }) {
+                                Icon(Icons.Default.Refresh, contentDescription = "Manual Sync")
+                            }
+                        }
+                    }
+                }
+            }
+
             // National Stage Status Banner
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -150,7 +199,7 @@ fun DashboardScreen(
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
-                            text = "LIVE",
+                            text = if (isOnline) "LIVE" else "CACHED",
                             fontWeight = FontWeight.Bold,
                             color = Color.Black,
                             fontSize = 12.sp

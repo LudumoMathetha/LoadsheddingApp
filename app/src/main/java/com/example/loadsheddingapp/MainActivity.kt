@@ -17,6 +17,7 @@ import com.example.loadsheddingapp.data.preferences.UserPreferencesManager
 import com.example.loadsheddingapp.data.repository.AuthRepository
 import com.example.loadsheddingapp.data.repository.ScheduleRepository
 import com.example.loadsheddingapp.data.repository.SuburbRepository
+import com.example.loadsheddingapp.data.repository.SyncRepository
 import com.example.loadsheddingapp.ui.navigation.AppNavigation
 import com.example.loadsheddingapp.ui.theme.LoadsheddingAppTheme
 import com.example.loadsheddingapp.ui.viewmodel.AuthViewModel
@@ -25,10 +26,12 @@ import com.example.loadsheddingapp.ui.viewmodel.ScheduleViewModel
 import com.example.loadsheddingapp.ui.viewmodel.SettingsViewModel
 import com.example.loadsheddingapp.ui.viewmodel.SuburbViewModel
 import com.example.loadsheddingapp.ui.viewmodel.ViewModelFactory
+import com.example.loadsheddingapp.utils.NetworkMonitor
+import com.example.loadsheddingapp.utils.NotificationHelper
 import java.util.Locale
 
 // MainActivity serves as the single Activity entry point for Jetpack Compose.
-// It initializes core data dependencies (Room, DataStore, Repositories) and ViewModels,
+// It initializes core data dependencies (Room, DataStore, Repositories, Offline Sync, Notification Channels) and ViewModels,
 // then observes user theme and language preferences to display the localized navigation graph.
 class MainActivity : ComponentActivity() {
 
@@ -36,9 +39,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // Create Android Notification Channel for real-time stage alerts and schedule reminders.
+        NotificationHelper.createNotificationChannel(applicationContext)
+
         // Initialize local Room Database and DataStore preferences manager instances.
         val database = AppDatabase.getDatabase(applicationContext)
         val preferencesManager = UserPreferencesManager(applicationContext)
+
+        // Initialize NetworkMonitor and SyncRepository for offline mode with background sync capabilities.
+        val networkMonitor = NetworkMonitor(applicationContext)
+        val syncRepository = SyncRepository(
+            pendingSyncDao = database.pendingSyncDao(),
+            networkMonitor = networkMonitor,
+            context = applicationContext
+        )
 
         // Instantiate repository layer instances so ViewModels do not access DAOs or Retrofit directly.
         val authRepository = AuthRepository(database.userDao())
@@ -50,7 +64,8 @@ class MainActivity : ComponentActivity() {
             authRepository = authRepository,
             suburbRepository = suburbRepository,
             scheduleRepository = scheduleRepository,
-            preferencesManager = preferencesManager
+            preferencesManager = preferencesManager,
+            syncRepository = syncRepository
         )
 
         // Instantiate ViewModels bound to the Activity lifecycle.

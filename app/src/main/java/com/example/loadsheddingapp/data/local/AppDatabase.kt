@@ -4,23 +4,26 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.loadsheddingapp.data.local.dao.PendingSyncDao
 import com.example.loadsheddingapp.data.local.dao.ScheduleDao
 import com.example.loadsheddingapp.data.local.dao.SuburbDao
 import com.example.loadsheddingapp.data.local.dao.UserDao
+import com.example.loadsheddingapp.data.local.entity.PendingSyncEntity
 import com.example.loadsheddingapp.data.local.entity.ScheduleEntity
 import com.example.loadsheddingapp.data.local.entity.SuburbEntity
 import com.example.loadsheddingapp.data.local.entity.UserEntity
 
 // AppDatabase is the central Room database class for the application.
-// Room provides local SQLite persistence so saved suburbs and schedule slots
-// remain available offline even when there is no internet connection.
+// Room provides local SQLite persistence so saved suburbs, schedule slots,
+// and offline sync tasks remain available offline even when there is no internet connection.
 @Database(
     entities = [
         SuburbEntity::class,
         ScheduleEntity::class,
-        UserEntity::class
+        UserEntity::class,
+        PendingSyncEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -29,6 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun suburbDao(): SuburbDao
     abstract fun scheduleDao(): ScheduleDao
     abstract fun userDao(): UserDao
+    abstract fun pendingSyncDao(): PendingSyncDao
 
     companion object {
         @Volatile

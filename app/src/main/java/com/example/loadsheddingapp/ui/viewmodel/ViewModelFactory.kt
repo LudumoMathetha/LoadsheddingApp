@@ -6,13 +6,15 @@ import com.example.loadsheddingapp.data.preferences.UserPreferencesManager
 import com.example.loadsheddingapp.data.repository.AuthRepository
 import com.example.loadsheddingapp.data.repository.ScheduleRepository
 import com.example.loadsheddingapp.data.repository.SuburbRepository
+import com.example.loadsheddingapp.data.repository.SyncRepository
 
-// Custom ViewModelProvider.Factory for instantiating ViewModels with repository dependencies.
+// Custom ViewModelProvider.Factory for instantiating ViewModels with repository and sync dependencies.
 class ViewModelFactory(
     private val authRepository: AuthRepository,
     private val suburbRepository: SuburbRepository,
     private val scheduleRepository: ScheduleRepository,
-    private val preferencesManager: UserPreferencesManager
+    private val preferencesManager: UserPreferencesManager,
+    private val syncRepository: SyncRepository
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
@@ -22,10 +24,10 @@ class ViewModelFactory(
                 AuthViewModel(authRepository) as T
             }
             modelClass.isAssignableFrom(DashboardViewModel::class.java) -> {
-                DashboardViewModel(suburbRepository) as T
+                DashboardViewModel(suburbRepository, syncRepository) as T
             }
             modelClass.isAssignableFrom(SuburbViewModel::class.java) -> {
-                SuburbViewModel(suburbRepository) as T
+                SuburbViewModel(suburbRepository, syncRepository) as T
             }
             modelClass.isAssignableFrom(ScheduleViewModel::class.java) -> {
                 ScheduleViewModel(scheduleRepository, suburbRepository) as T

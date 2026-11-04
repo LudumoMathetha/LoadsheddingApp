@@ -3,6 +3,7 @@ package com.example.loadsheddingapp.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loadsheddingapp.data.repository.SuburbRepository
+import com.example.loadsheddingapp.data.repository.SyncRepository
 import com.example.loadsheddingapp.domain.model.Suburb
 import com.example.loadsheddingapp.utils.NetworkResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,13 +13,28 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-// ViewModel for Dashboard screen managing national stage banner and saved suburbs overview.
+// ViewModel for Dashboard screen managing national stage banner, offline sync state, and saved suburbs.
 class DashboardViewModel(
-    private val suburbRepository: SuburbRepository
+    private val suburbRepository: SuburbRepository,
+    private val syncRepository: SyncRepository? = null
 ) : ViewModel() {
 
     private val _nationalStage = MutableStateFlow(2) // Default stage 2
     val nationalStage: StateFlow<Int> = _nationalStage.asStateFlow()
+
+    val pendingSyncCount: StateFlow<Int> = (syncRepository?.pendingSyncCount ?: MutableStateFlow(0))
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = 0
+        )
+
+    val isOnline: StateFlow<Boolean> = (syncRepository?.isOnline ?: MutableStateFlow(true))
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = true
+        )
 
     val savedSuburbs: StateFlow<List<Suburb>> = suburbRepository.savedSuburbs
         .stateIn(
@@ -47,12 +63,20 @@ class DashboardViewModel(
     fun toggleFavorite(suburbId: String, currentFavorite: Boolean) {
         viewModelScope.launch {
             suburbRepository.toggleFavorite(suburbId, !currentFavorite)
+            syncRepository?.queueOfflineAction("TOGGLE_FAVORITE", suburbId, (!currentFavorite).toString())
         }
     }
 
     fun removeSuburb(suburb: Suburb) {
         viewModelScope.launch {
             suburbRepository.deleteSuburb(suburb)
+            syncRepository?.queueOfflineAction("DELETE_SUBURB", suburb.suburbId)
+        }
+    }
+
+    fun triggerManualSync() {
+        viewModelScope.launch {
+            syncRepository?.processPendingSyncs()
         }
     }
 }

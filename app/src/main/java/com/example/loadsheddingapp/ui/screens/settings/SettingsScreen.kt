@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DividerDefaults
@@ -36,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,8 +45,9 @@ import androidx.compose.ui.unit.sp
 import com.example.loadsheddingapp.R
 import com.example.loadsheddingapp.ui.viewmodel.AuthViewModel
 import com.example.loadsheddingapp.ui.viewmodel.SettingsViewModel
+import com.example.loadsheddingapp.utils.NotificationHelper
 
-// SettingsScreen providing Dark Mode toggle, language selection (English, Afrikaans, isiXhosa), notification options, and student prototype information.
+// SettingsScreen providing Dark Mode toggle, language selection (English, Afrikaans, isiXhosa), notification options, real-time alert testing, and student prototype information.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -54,6 +57,7 @@ fun SettingsScreen(
     onLogout: () -> Unit
 ) {
     val userPreferences by settingsViewModel.userPreferences.collectAsState()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -136,7 +140,7 @@ fun SettingsScreen(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = DividerDefaults.color)
 
-            // Notifications Setting Section
+            // Notifications Setting Section & Real-Time Alert Trigger Test
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -171,6 +175,24 @@ fun SettingsScreen(
                             Text(text = label, style = MaterialTheme.typography.bodySmall)
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Test Real-Time Alert Button
+                    Button(
+                        onClick = {
+                            NotificationHelper.showStageChangeNotification(
+                                context = context,
+                                suburbName = "Sandton Central",
+                                newStage = 3
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Notifications, contentDescription = null)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Trigger Test Real-Time Stage Alert")
+                    }
                 }
             }
 
@@ -197,7 +219,7 @@ fun SettingsScreen(
                     Text("Application: ${stringResource(R.string.app_name)}", style = MaterialTheme.typography.bodySmall)
                     Text("Student: Ludumo Mathetha (ST10449894)", style = MaterialTheme.typography.bodySmall)
                     Text("Module: OPSC6312 Part 2 Prototype", style = MaterialTheme.typography.bodySmall)
-                    Text("Languages: English, Afrikaans, isiXhosa", style = MaterialTheme.typography.bodySmall)
+                    Text("Features: Offline Room Sync & Real-Time Alerts", style = MaterialTheme.typography.bodySmall)
                 }
             }
 
