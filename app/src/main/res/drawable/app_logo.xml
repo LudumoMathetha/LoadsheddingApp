@@ -1,0 +1,107 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Cream Round Background -->
+    <path
+        android:fillColor="#FAF6ED"
+        android:pathData="M256,16 C123.45,16 16,123.45 16,256 C16,388.55 123.45,496 256,496 C388.55,496 496,388.55 496,256 C496,123.45 388.55,16 256,16 Z" />
+
+    <!-- Dark Circular Outer Frame Line -->
+    <path
+        android:strokeColor="#13242C"
+        android:strokeWidth="10"
+        android:fillColor="#00000000"
+        android:pathData="M256,26 C128.98,26 26,128.98 26,256 C26,383.02 128.98,486 256,486 C383.02,486 486,383.02 486,256 C486,128.98 383.02,26 256,26 Z" />
+
+    <!-- Sun Rays around Lightbulb -->
+    <path
+        android:fillColor="#F8A800"
+        android:pathData="M256,20 L256,50 M180,45 L198,68 M332,45 L314,68 M125,100 L152,118 M387,100 L360,118"
+        android:strokeColor="#F8A800"
+        android:strokeWidth="12"
+        android:strokeLineCap="round" />
+
+    <!-- Lightbulb Base & Glass -->
+    <path
+        android:fillColor="#FDB813"
+        android:strokeColor="#13242C"
+        android:strokeWidth="8"
+        android:pathData="M216,120 C216,90 234,70 256,70 C278,70 296,90 296,120 C296,145 280,165 272,180 L240,180 C232,165 216,145 216,120 Z" />
+
+    <!-- Lightning Bolt inside Lightbulb -->
+    <path
+        android:fillColor="#13242C"
+        android:pathData="M260,85 L242,120 L256,120 L248,155 L272,115 L256,115 Z" />
+
+    <!-- Bulb Screw Base -->
+    <path
+        android:fillColor="#13242C"
+        android:pathData="M240,182 H272 V192 H240 Z M243,196 H269 V204 H243 Z" />
+
+    <!-- Green Mountain Silhouette Background -->
+    <path
+        android:fillColor="#2D5F45"
+        android:pathData="M80,270 L170,180 L240,240 L340,160 L430,270 Z" />
+
+    <!-- Dark Village House Silhouettes -->
+    <path
+        android:fillColor="#13242C"
+        android:pathData="M160,270 L160,230 L200,210 L240,230 L240,270 Z M280,270 L280,220 L320,200 L360,220 L360,270 Z M380,270 L380,235 L410,215 L440,235 L440,270 Z" />
+
+    <!-- House Windows (Yellow Glow) -->
+    <path
+        android:fillColor="#FDB813"
+        android:pathData="M185,240 H195 V250 H185 Z M220,245 H230 V255 H220 Z M300,235 H310 V245 H300 Z M335,235 H345 V245 H335 Z M400,245 H410 V255 H400 Z" />
+
+    <!-- Smartphone on Left -->
+    <path
+        android:fillColor="#13242C"
+        android:pathData="M65,160 H155 V280 H65 Z" />
+    <path
+        android:fillColor="#FAF6ED"
+        android:pathData="M73,172 H147 V268 H73 Z" />
+    <!-- Calendar & Clock Icon on Smartphone Screen -->
+    <path
+        android:fillColor="#13242C"
+        android:pathData="M85,185 H135 V235 H85 Z M90,195 H130 V230 H90 Z" />
+    <path
+        android:fillColor="#13242C"
+        android:pathData="M120,235 A12,12 0 1,1 120,259 A12,12 0 1,1 120,235 Z" />
+
+    <!-- Transmission Power Line Pole on Right -->
+    <path
+        android:strokeColor="#13242C"
+        android:strokeWidth="6"
+        android:fillColor="#00000000"
+        android:pathData="M370,170 L370,270 M340,190 L400,190 M345,210 L395,210 M340,190 L370,230 M400,190 L370,230" />
+
+    <!-- Main Dark Green Banner -->
+    <path
+        android:fillColor="#0F3822"
+        android:strokeColor="#13242C"
+        android:strokeWidth="6"
+        android:pathData="M35,260 C35,260 256,245 477,260 C490,260 495,275 490,295 C480,335 480,345 470,365 C465,375 256,380 42,365 C32,345 32,335 22,295 C17,275 22,260 35,260 Z" />
+
+    <!-- Curved Decorative Banner Stripe (Gold) -->
+    <path
+        android:fillColor="#FDB813"
+        android:pathData="M70,325 C160,315 352,315 442,325 C452,325 452,335 442,335 C352,325 160,325 70,335 Z" />
+
+    <!-- South African Flag Ribbon Element at Bottom -->
+    <path
+        android:fillColor="#007A4D"
+        android:pathData="M170,420 Q256,400 342,420 L332,430 Q256,410 180,430 Z" />
+    <path
+        android:fillColor="#FDB813"
+        android:pathData="M180,430 Q256,410 332,430 L322,440 Q256,420 190,440 Z" />
+    <path
+        android:fillColor="#DE3831"
+        android:pathData="M190,440 Q256,420 322,440 L312,448 Q256,428 200,448 Z" />
+    <path
+        android:fillColor="#002395"
+        android:pathData="M200,448 Q256,428 312,448 L302,456 Q256,436 210,456 Z" />
+
+</vector>
