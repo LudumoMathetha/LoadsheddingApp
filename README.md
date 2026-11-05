@@ -1,160 +1,192 @@
-# Load-Shedding Tracker
+Load-Shedding Tracker
 
-## Project Overview
-Load-Shedding Tracker is an Android mobile application prototype developed for tracking electricity load-shedding stages and schedules in South Africa. The application allows users to create local accounts, search for suburbs across South African municipalities, save multiple locations, view daily and weekly load-shedding schedule slots, and access previously loaded schedules offline via a local Room Database.
+Project Overview
 
-## Key Features Implemented (Part 2 Prototype)
-- User Authentication: Local prototype registration, login, logout, password validation, and SHA-256 hashed password storage.
-- Suburb Management: Search suburbs via REST API, view current load-shedding stage, add multiple suburbs, mark favorites, and delete saved suburbs.
-- Schedule Tracking: View daily and weekly load-shedding schedule slots per suburb.
-- Offline Room Database Caching: Automatic caching of suburb information and schedule slots in Room Database for offline access.
-- User Preferences: Jetpack DataStore preferences for toggling Dark Mode, selecting preferred language (English, isiZulu, Afrikaans structure), and configuring notification lead time reminders.
-- Robust Error Handling: User-friendly error messages and fallback mechanisms to prevent app crashes during network failures.
+Load-Shedding Tracker is an Android application designed to help South African users stay informed about electricity load-shedding schedules and manage their daily activities around planned power outages.
 
-## Technology Stack
-- Programming Language: Kotlin
-- User Interface: Jetpack Compose, Material 3, Navigation Compose
-- Architecture: MVVM (Model-View-ViewModel), Repository Pattern, Unidirectional Data Flow
-- Local Storage: Room Database (Entities, DAOs, Async Flow), Jetpack DataStore Preferences
-- Network & REST API: Retrofit 2, OkHttp 4, Gson Converter, HttpLoggingInterceptor
-- Asynchronous Processing: Kotlin Coroutines, StateFlow, SharedFlow
-- Annotation Processor: Google KSP (Kotlin Symbol Processing)
-- Testing: JUnit 4, Kotlinx Coroutines Test
+The application provides users with access to load-shedding information, suburb management, schedules, notifications and personalised settings.
 
-## Project Structure
-```
-com.example.loadsheddingapp
-├── MainActivity.kt
-│
-├── data
-│   ├── local
-│   │   ├── AppDatabase.kt
-│   │   ├── dao
-│   │   │   ├── SuburbDao.kt
-│   │   │   ├── ScheduleDao.kt
-│   │   │   └── UserDao.kt
-│   │   └── entity
-│   │       ├── SuburbEntity.kt
-│   │       ├── ScheduleEntity.kt
-│   │       └── UserEntity.kt
-│   │
-│   ├── remote
-│   │   ├── LoadSheddingApiService.kt
-│   │   ├── RetrofitInstance.kt
-│   │   ├── MockLoadSheddingData.kt
-│   │   └── dto
-│   │       ├── SuburbDto.kt
-│   │       ├── ScheduleDto.kt
-│   │       └── LoadSheddingResponseDto.kt
-│   │
-│   ├── repository
-│   │   ├── AuthRepository.kt
-│   │   ├── SuburbRepository.kt
-│   │   └── ScheduleRepository.kt
-│   │
-│   └── preferences
-│       └── UserPreferencesManager.kt
-│
-├── domain
-│   └── model
-│       ├── Suburb.kt
-│       ├── Schedule.kt
-│       ├── User.kt
-│       └── UserPreferences.kt
-│
-├── ui
-│   ├── components
-│   │   ├── LoadingIndicator.kt
-│   │   ├── ErrorMessage.kt
-│   │   ├── SuburbCard.kt
-│   │   └── ScheduleCard.kt
-│   │
-│   ├── navigation
-│   │   ├── AppNavigation.kt
-│   │   └── Screen.kt
-│   │
-│   ├── screens
-│   │   ├── auth
-│   │   │   ├── LoginScreen.kt
-│   │   │   └── RegisterScreen.kt
-│   │   ├── dashboard
-│   │   │   └── DashboardScreen.kt
-│   │   ├── suburbs
-│   │   │   ├── SearchSuburbScreen.kt
-│   │   │   └── SavedSuburbsScreen.kt
-│   │   ├── schedule
-│   │   │   └── ScheduleDetailScreen.kt
-│   │   └── settings
-│   │       └── SettingsScreen.kt
-│   │
-│   ├── theme
-│   │   ├── Color.kt
-│   │   ├── Theme.kt
-│   │   └── Type.kt
-│   │
-│   └── viewmodel
-│       ├── AuthViewModel.kt
-│       ├── DashboardViewModel.kt
-│       ├── SuburbViewModel.kt
-│       ├── ScheduleViewModel.kt
-│       ├── SettingsViewModel.kt
-│       └── ViewModelFactory.kt
-│
-└── utils
-    ├── ValidationUtils.kt
-    └── NetworkResult.kt
-```
+The project is developed as part of the OPSC6312 Portfolio of Evidence.
 
-## Setup Instructions
+Technologies Used
 
-### 1. Prerequisites
-- Android Studio Ladybug / Jellyfish or newer
-- JDK 17 / JDK 21
-- Android SDK 36 (Minimum SDK 24)
+* Kotlin
+* Android Studio
+* Jetpack Compose
+* Material 3
+* MVVM Architecture
+* Repository Pattern
+* Kotlin Coroutines and Flow
+* Room Database
+* DataStore Preferences
+* Retrofit
+* REST API
+* SQL Database
+* Firebase Authentication
+* WorkManager
+* GitHub Actions
 
-### 2. Opening the Project
-1. Launch Android Studio.
-2. Select "Open" and select the project directory.
-3. Wait for Gradle to finish syncing dependencies.
+Main Features
 
-### 3. REST API Configuration
-The base REST API URL is configured in `data/remote/RetrofitInstance.kt`:
-```kotlin
-private const val BASE_URL = "http://10.0.2.2:8080/api/"
-```
-- For Android Emulator connecting to host machine localhost: Use `http://10.0.2.2:8080/api/`
-- For Physical Android Device on local Wi-Fi: Use `http://<YOUR_COMPUTER_IP>:8080/api/`
-- For Hosted Cloud API: Replace with `https://your-domain.com/api/`
+User Authentication
 
-## Room Database Architecture
-The local Room Database (`AppDatabase`) manages three primary tables:
-1. `suburbs`: Holds saved suburb metadata, favorite status, and stage info.
-2. `schedules`: Holds schedule slot start/end times and stage details with a foreign key constraint linking to `suburbs` with `CASCADE` deletion.
-3. `users`: Holds local prototype account credentials using SHA-256 password hashes.
+* User registration and login.
+* Secure password handling.
+* User authentication and session management.
+* Google Sign-In support, where configured.
 
-## Authentication Overview
-In Part 2, user registration and authentication are handled locally using `UserDao` and `AuthRepository`. Plaintext passwords are NEVER stored; passwords are hashed using SHA-256 in `ValidationUtils.kt`.
-In subsequent PoE development stages, this local prototype authentication layer will be replaced with Firebase Authentication.
+Load-Shedding Dashboard
 
-## Running the Application
-1. Start an Android Virtual Device (AVD) emulator or connect a physical Android device via USB with ADB debugging enabled.
-2. Click the Run button in Android Studio or execute:
-```bash
-./gradlew assembleDebug
-```
+* Displays current load-shedding information.
+* Provides access to saved suburbs.
+* Presents relevant electricity outage information.
 
-## Running Unit Tests
-Unit tests cover input validation, Room repository CRUD operations, offline cache fallback, and ViewModels.
-To run unit tests from the command line:
-```bash
-./gradlew testDebugUnitTest
-```
-To run unit tests inside Android Studio:
-Right-click on `app/src/test/java/com/example/loadsheddingapp` and select "Run Tests in 'com.example...'".
+Suburb Management
 
-## Known Limitations
-- Local Authentication: User credentials are managed locally in Room for Part 2 prototype purposes. Cloud session sync will be added with Firebase Auth in Part 3.
-- Language Localization: Language options are selectable in Settings and stored in DataStore; string resource files for full isiZulu and Afrikaans translations will be expanded in future PoE stages.
+* Search for suburbs.
+* Add and manage saved locations.
+* Access load-shedding information for different locations.
 
-## GitHub Actions Workflow
-The project includes a GitHub Actions workflow defined in `.github/workflows/android.yml`. It runs automated unit tests and debug builds on every push or pull request to the `main` or `master` branch.
+Load-Shedding Schedules
+
+* View daily and weekly schedules.
+* Access outage information for selected suburbs.
+* View previously cached schedule information.
+
+Notifications
+
+* Receive load-shedding notifications.
+* Configure notification preferences.
+* Schedule advance alerts before planned outages.
+
+Application Settings
+
+* Change application language.
+* Switch between light and dark themes.
+* Manage notification preferences.
+
+Offline Support
+
+* Access previously cached information.
+* Store selected application data locally using Room Database.
+* Synchronise information when an internet connection becomes available.
+
+Application Architecture
+
+The application follows the Model-View-ViewModel (MVVM) architectural pattern, with the Repository Pattern and Unidirectional Data Flow (UDF).
+
+The architecture separates the application into different responsibilities:
+
+* UI Layer: Jetpack Compose screens and user interface components.
+* ViewModel Layer: Manages screen state and application logic.
+* Repository Layer: Coordinates data from remote and local sources.
+* Data Layer: Handles API communication, Room Database and DataStore.
+* Backend Layer: Provides REST API services and database connectivity.
+
+This structure improves maintainability, code organisation and separation of concerns.
+
+Backend and Database
+
+The application communicates with an online REST API to retrieve and manage application data.
+
+The backend is responsible for processing requests and interacting with the connected database.
+
+The application also uses Room Database for local data storage and offline access.
+
+Project Setup
+
+Requirements
+
+* Android Studio
+* Android SDK
+* Kotlin
+* An Android device or emulator
+* Internet connection for online services
+
+Installation
+
+1. Clone the repository:
+
+git clone YOUR_GITHUB_REPOSITORY_URL
+
+2. Open the project in Android Studio.
+3. Allow Gradle to synchronise the project.
+4. Configure the required backend API address and application credentials.
+5. Build and run the application on an Android emulator or physical device.
+
+Building the Application
+
+The application can be built using Android Studio.
+
+Debug APK
+
+1. Open the project in Android Studio.
+2. Select Build.
+3. Select Build APK(s).
+4. Locate the generated APK in the application build output directory.
+
+Signed Release APK
+
+A signed release APK has been generated using Android Studio’s Generate Signed Bundle / APK wizard.
+
+Android App Bundle
+
+A signed Android App Bundle (AAB) has also been generated for Google Play distribution preparation.
+
+Testing
+
+The application is tested to verify its main functionality and reliability.
+
+Testing areas include:
+
+* User registration and authentication.
+* Dashboard functionality.
+* Suburb searching and management.
+* Load-shedding schedule retrieval.
+* Application settings.
+* Notification functionality.
+* Local data storage.
+* API communication.
+* Offline functionality.
+
+Automated tests are included where implemented.
+
+Publication Preparation
+
+The application has progressed through the release packaging stage.
+
+The following publication preparation activities have been completed:
+
+* Generation of a signed release APK.
+* Generation of a signed Android App Bundle (AAB).
+* Preparation of the application for installation and release testing.
+
+Google Play Console submission and public publication are separate activities and should only be considered completed once the corresponding release has actually been uploaded or published.
+
+Continuous Integration
+
+GitHub Actions is used for automated project workflows where configured.
+
+The workflow can be used to build the application and execute automated tests to help identify issues during development.
+
+Version Control
+
+Git and GitHub are used for source-code management and project collaboration.
+
+Changes are committed and pushed to the repository throughout the development process to maintain an updated project history.
+
+Developers
+
+Name: Ludumo Mathetha, Phelo Gusha, Chulumanco Iviwe Ngongomana
+
+Project: Load-Shedding Tracker
+
+Module: OPSC6312
+
+Platform: Android
+
+Licence
+
+This project was developed for academic purposes as part of the OPSC6312 Portfolio of Evidence.
+
+YouTube video demonstration link - https://youtube.com/shorts/bs2g_AIxB-I?si=Qt8UpFZtKTwgi-ZY
