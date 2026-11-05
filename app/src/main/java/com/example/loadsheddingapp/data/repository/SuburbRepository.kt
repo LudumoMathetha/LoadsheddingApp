@@ -23,22 +23,27 @@ class SuburbRepository(
         entities.map { it.toDomainModel() }
     }
 
-    // Searches remote REST API for matching suburbs with fallback to mock data on network error
+    // Searches remote REST API for matching suburbs across all South African provinces and municipalities,
+    // with fallback to the local South African suburb dataset on network error or offline mode.
     suspend fun searchRemoteSuburbs(query: String): NetworkResult<List<Suburb>> {
         if (query.isBlank()) return NetworkResult.Success(emptyList())
 
         return try {
             val response = apiService.searchSuburbs(query)
-            if (response.isSuccessful && response.body() != null) {
+            if (response.isSuccessful && response.body() != null && response.body()!!.isNotEmpty()) {
                 val suburbs = response.body()!!.map { dto ->
                     val isFav = suburbDao.exists(dto.suburbId)
                     dto.toDomainModel(isFavorite = isFav)
                 }
                 NetworkResult.Success(suburbs)
             } else {
-                // Network HTTP failure fallback
+                // Filter across South African suburb name, municipality, or province
                 val mockMatches = MockLoadSheddingData.mockSuburbs
-                    .filter { it.name.contains(query, ignoreCase = true) || it.municipality.contains(query, ignoreCase = true) }
+                    .filter {
+                        it.name.contains(query, ignoreCase = true) ||
+                        it.municipality.contains(query, ignoreCase = true) ||
+                        it.province.contains(query, ignoreCase = true)
+                    }
                     .map { dto ->
                         val isFav = suburbDao.exists(dto.suburbId)
                         dto.toDomainModel(isFavorite = isFav)
@@ -46,9 +51,13 @@ class SuburbRepository(
                 NetworkResult.Success(mockMatches)
             }
         } catch (e: Exception) {
-            // Offline or network exception fallback
+            // Offline or network exception fallback across South African suburbs
             val mockMatches = MockLoadSheddingData.mockSuburbs
-                .filter { it.name.contains(query, ignoreCase = true) || it.municipality.contains(query, ignoreCase = true) }
+                .filter {
+                    it.name.contains(query, ignoreCase = true) ||
+                    it.municipality.contains(query, ignoreCase = true) ||
+                    it.province.contains(query, ignoreCase = true)
+                }
                 .map { dto ->
                     val isFav = suburbDao.exists(dto.suburbId)
                     dto.toDomainModel(isFavorite = isFav)
