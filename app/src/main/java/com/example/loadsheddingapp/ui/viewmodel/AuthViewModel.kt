@@ -18,7 +18,8 @@ data class LoginUiState(
     val isPasswordVisible: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    val isSuccess: Boolean = false
+    val isSuccess: Boolean = false,
+    val showSsoDialog: Boolean = false
 )
 
 // UI state for Register form
@@ -31,10 +32,11 @@ data class RegisterUiState(
     val isConfirmPasswordVisible: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    val isSuccess: Boolean = false
+    val isSuccess: Boolean = false,
+    val showSsoDialog: Boolean = false
 )
 
-// ViewModel managing login, registration, and user authentication state.
+// ViewModel managing login, registration, Single Sign-On (SSO), and user authentication state.
 class AuthViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
@@ -58,6 +60,11 @@ class AuthViewModel(
 
     fun toggleLoginPasswordVisibility() {
         _loginState.value = _loginState.value.copy(isPasswordVisible = !_loginState.value.isPasswordVisible)
+    }
+
+    fun showSsoDialog(show: Boolean) {
+        _loginState.value = _loginState.value.copy(showSsoDialog = show)
+        _registerState.value = _registerState.value.copy(showSsoDialog = show)
     }
 
     fun login() {
@@ -93,6 +100,28 @@ class AuthViewModel(
                         isLoading = false,
                         errorMessage = result.message ?: "Authentication failed."
                     )
+                }
+                is NetworkResult.Loading -> {
+                    _loginState.value = _loginState.value.copy(isLoading = true)
+                }
+            }
+        }
+    }
+
+    // Handles Single Sign-On (SSO) login flow (Google, Microsoft, GitHub)
+    fun loginWithSso(provider: String, email: String, fullName: String) {
+        _loginState.value = _loginState.value.copy(isLoading = true, errorMessage = null, showSsoDialog = false)
+        _registerState.value = _registerState.value.copy(isLoading = true, errorMessage = null, showSsoDialog = false)
+
+        viewModelScope.launch {
+            when (val result = authRepository.authenticateWithSsoProvider(provider, email, fullName)) {
+                is NetworkResult.Success -> {
+                    _loginState.value = _loginState.value.copy(isLoading = false, isSuccess = true, errorMessage = null)
+                    _registerState.value = _registerState.value.copy(isLoading = false, isSuccess = true, errorMessage = null)
+                }
+                is NetworkResult.Error -> {
+                    _loginState.value = _loginState.value.copy(isLoading = false, errorMessage = result.message ?: "$provider SSO failed.")
+                    _registerState.value = _registerState.value.copy(isLoading = false, errorMessage = result.message ?: "$provider SSO failed.")
                 }
                 is NetworkResult.Loading -> {
                     _loginState.value = _loginState.value.copy(isLoading = true)

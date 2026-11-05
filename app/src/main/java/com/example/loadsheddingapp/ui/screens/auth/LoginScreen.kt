@@ -3,25 +3,30 @@ package com.example.loadsheddingapp.ui.screens.auth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,9 +47,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.loadsheddingapp.R
+import com.example.loadsheddingapp.ui.components.SsoAccountPickerDialog
 import com.example.loadsheddingapp.ui.viewmodel.AuthViewModel
 
-// LoginScreen component providing form inputs, validation error banners, and authentication triggers.
+// LoginScreen component providing email/password form inputs, Single Sign-On (SSO) options, and error banners.
 @Composable
 fun LoginScreen(
     authViewModel: AuthViewModel,
@@ -57,6 +63,16 @@ fun LoginScreen(
         if (loginState.isSuccess) {
             onLoginSuccess()
         }
+    }
+
+    if (loginState.showSsoDialog) {
+        SsoAccountPickerDialog(
+            providerName = "Google",
+            onDismiss = { authViewModel.showSsoDialog(false) },
+            onAccountSelected = { email, fullName ->
+                authViewModel.loginWithSso("Google", email, fullName)
+            }
+        )
     }
 
     Surface(
@@ -75,10 +91,10 @@ fun LoginScreen(
             Image(
                 painter = painterResource(id = R.drawable.app_logo),
                 contentDescription = "Load-Shedding Tracker Logo",
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(110.dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = stringResource(R.string.app_name),
@@ -95,7 +111,7 @@ fun LoginScreen(
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Error Message Display
             if (loginState.errorMessage != null) {
@@ -123,7 +139,7 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Password Input Field
             OutlinedTextField(
@@ -148,7 +164,7 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Login Button
             Button(
@@ -166,6 +182,36 @@ fun LoginScreen(
                 } else {
                     Text(text = stringResource(R.string.sign_in_button), fontSize = 16.sp)
                 }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Single Sign-On (SSO) Section Divider
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                HorizontalDivider(modifier = Modifier.weight(1f))
+                Text(
+                    text = "  OR CONTINUE WITH SSO  ",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                )
+                HorizontalDivider(modifier = Modifier.weight(1f))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Google Single Sign-On (SSO) Button
+            OutlinedButton(
+                onClick = { authViewModel.showSsoDialog(true) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+            ) {
+                Icon(Icons.Default.Security, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Sign in with Google SSO")
             }
 
             Spacer(modifier = Modifier.height(16.dp))

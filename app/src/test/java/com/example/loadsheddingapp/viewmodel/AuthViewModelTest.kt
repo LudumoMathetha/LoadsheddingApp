@@ -57,6 +57,15 @@ class AuthViewModelTest {
     }
 
     @Test
+    fun loginWithSso_successfulSso_updatesStateAndSession() {
+        authViewModel.loginWithSso("Google", "ST10449894@rcconnect.edu.za", "Ludumo Mathetha")
+
+        assertTrue(authViewModel.loginState.value.isSuccess)
+        assertNull(authViewModel.loginState.value.errorMessage)
+        assertEquals("st10449894@rcconnect.edu.za", authViewModel.currentUser.value?.email)
+    }
+
+    @Test
     fun register_weakPassword_setsErrorMessage() {
         authViewModel.onRegisterFullNameChanged("Ludumo Mathetha")
         authViewModel.onRegisterEmailChanged("ludumo@example.com")

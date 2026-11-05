@@ -11,9 +11,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
-// The AuthRepository handles local prototype authentication operations.
-// Note: This repository acts as a local prototype implementation.
-// In future PoE stages, Firebase Authentication will replace local Room user authentication.
+// The AuthRepository handles local prototype authentication, session state, and Single Sign-On (SSO).
+// In production, SSO identity tokens (OAuth2/OpenID Connect) are validated against identity providers like Google or Microsoft.
 class AuthRepository(
     private val userDao: UserDao
 ) {
@@ -62,6 +61,41 @@ class AuthRepository(
             NetworkResult.Success(authenticatedUser)
         } catch (e: Exception) {
             NetworkResult.Error("Authentication failed: ${e.localizedMessage}")
+        }
+    }
+
+    // Authenticates a user using Google Single Sign-On (SSO).
+    // Automatically creates or retrieves the user profile in Room without requiring password entry.
+    suspend fun loginWithGoogle(email: String, fullName: String): NetworkResult<User> {
+        return authenticateWithSsoProvider("Google", email, fullName)
+    }
+
+    // Generic Single Sign-On (SSO) authentication handler for identity providers (Google, Microsoft, GitHub).
+    suspend fun authenticateWithSsoProvider(provider: String, email: String, fullName: String): NetworkResult<User> {
+        return try {
+            val cleanEmail = email.trim().lowercase()
+            val cleanName = fullName.ifBlank { "SSO User" }
+            var existingUser = userDao.getUserByEmail(cleanEmail)
+
+            if (existingUser == null) {
+                // If SSO user does not exist in local database, create a new profile automatically
+                val userId = "sso_${UUID.randomUUID()}"
+                val ssoPasswordPlaceholder = ValidationUtils.hashPassword("SSO_FEDERATED_LOGIN_${System.currentTimeMillis()}")
+
+                existingUser = UserEntity(
+                    userId = userId,
+                    fullName = cleanName,
+                    email = cleanEmail,
+                    passwordHash = ssoPasswordPlaceholder
+                )
+                userDao.insertUser(existingUser)
+            }
+
+            val ssoUser = existingUser.toDomainModel()
+            _currentUser.value = ssoUser
+            NetworkResult.Success(ssoUser)
+        } catch (e: Exception) {
+            NetworkResult.Error("$provider Single Sign-On failed: ${e.localizedMessage}")
         }
     }
 

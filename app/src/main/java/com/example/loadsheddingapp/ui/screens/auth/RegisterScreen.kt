@@ -3,12 +3,14 @@ package com.example.loadsheddingapp.ui.screens.auth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -16,13 +18,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -43,9 +48,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.loadsheddingapp.R
+import com.example.loadsheddingapp.ui.components.SsoAccountPickerDialog
 import com.example.loadsheddingapp.ui.viewmodel.AuthViewModel
 
-// RegisterScreen component for local user registration with input validation and error feedback.
+// RegisterScreen component for local user registration and Single Sign-On (SSO) account creation.
 @Composable
 fun RegisterScreen(
     authViewModel: AuthViewModel,
@@ -58,6 +64,16 @@ fun RegisterScreen(
         if (registerState.isSuccess) {
             onRegisterSuccess()
         }
+    }
+
+    if (registerState.showSsoDialog) {
+        SsoAccountPickerDialog(
+            providerName = "Google",
+            onDismiss = { authViewModel.showSsoDialog(false) },
+            onAccountSelected = { email, fullName ->
+                authViewModel.loginWithSso("Google", email, fullName)
+            }
+        )
     }
 
     Surface(
@@ -76,10 +92,10 @@ fun RegisterScreen(
             Image(
                 painter = painterResource(id = R.drawable.app_logo),
                 contentDescription = "Load-Shedding Tracker Logo",
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier.size(90.dp)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = stringResource(R.string.create_account_title),
@@ -96,7 +112,7 @@ fun RegisterScreen(
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Error Message Display
             if (registerState.errorMessage != null) {
@@ -124,7 +140,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Email Input Field
             OutlinedTextField(
@@ -140,7 +156,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Password Input Field
             OutlinedTextField(
@@ -165,7 +181,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Confirm Password Input Field
             OutlinedTextField(
@@ -190,7 +206,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Register Button
             Button(
@@ -198,7 +214,7 @@ fun RegisterScreen(
                 enabled = !registerState.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(48.dp)
             ) {
                 if (registerState.isLoading) {
                     CircularProgressIndicator(
@@ -208,6 +224,36 @@ fun RegisterScreen(
                 } else {
                     Text(text = stringResource(R.string.register_button), fontSize = 16.sp)
                 }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Single Sign-On (SSO) Section Divider
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                HorizontalDivider(modifier = Modifier.weight(1f))
+                Text(
+                    text = "  OR REGISTER WITH SSO  ",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                )
+                HorizontalDivider(modifier = Modifier.weight(1f))
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Google Single Sign-On (SSO) Button
+            OutlinedButton(
+                onClick = { authViewModel.showSsoDialog(true) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+            ) {
+                Icon(Icons.Default.Security, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Register with Google SSO")
             }
 
             Spacer(modifier = Modifier.height(12.dp))

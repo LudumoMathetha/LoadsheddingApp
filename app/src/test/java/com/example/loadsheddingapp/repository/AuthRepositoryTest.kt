@@ -53,6 +53,15 @@ class AuthRepositoryTest {
     }
 
     @Test
+    fun loginWithGoogle_authenticatesAndCreatesProfile() = runBlocking {
+        val result = authRepository.loginWithGoogle("ST10449894@rcconnect.edu.za", "Ludumo Mathetha")
+
+        assertTrue(result is NetworkResult.Success)
+        assertEquals("st10449894@rcconnect.edu.za", result.data?.email)
+        assertEquals("Ludumo Mathetha", authRepository.currentUser.value?.fullName)
+    }
+
+    @Test
     fun loginUser_incorrectPassword_returnsError() = runBlocking {
         authRepository.registerUser("Ludumo Mathetha", "login2@example.com", "ValidPass123")
         authRepository.logoutUser()
